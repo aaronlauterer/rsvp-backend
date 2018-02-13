@@ -1,0 +1,164 @@
+---
+swagger: "2.0"
+info:
+  description: "RSVP API"
+  version: "1.0.0"
+  title: "RSVP API"
+  contact:
+    email: "aaron@lauterer.at"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "virtserver.swaggerhub.com"
+basePath: "/aaron-lauterer/rsvp/1.0.0"
+schemes:
+- "https"
+paths:
+  /invitation:
+    get:
+      summary: "get invitation"
+      description: "Get an invitation\n"
+      operationId: "get_invite"
+      parameters:
+      - name: "id"
+        in: "query"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "invite matching id"
+          schema:
+            $ref: "#/definitions/invitation"
+        400:
+          description: "bad input parameter"
+        500:
+          description: "An unexpected error occured."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
+    post:
+      summary: "adds an invitation"
+      description: "Adds an invitation"
+      operationId: "add_invite"
+      parameters:
+      - in: "body"
+        name: "invitation"
+        required: true
+        schema:
+          $ref: "#/definitions/invitation"
+      responses:
+        201:
+          description: "invitation created"
+        400:
+          description: "invalid input, object invalid"
+        409:
+          description: "an existing invitation already exists"
+        500:
+          description: "An unexpected error occured."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
+  /allinvites:
+    get:
+      summary: "get all invitations"
+      description: "Get all invitations"
+      operationId: "get_all_invites"
+      parameters: []
+      responses:
+        200:
+          description: "Get all invitations"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/invitation"
+        401:
+          description: "Access token is missing or invalid"
+        500:
+          description: "An unexpected error occured."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
+  /updateinvite:
+    post:
+      summary: "update invitation"
+      description: "Updates an invitiation."
+      operationId: "update_invite"
+      parameters:
+      - in: "body"
+        name: "updateinvitation"
+        required: false
+        schema:
+          $ref: "#/definitions/invitation"
+      responses:
+        200:
+          description: "Invitation updated"
+        400:
+          description: "invalid input, object invalid"
+        500:
+          description: "An unexpected error occured."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
+securityDefinitions:
+  bearerAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+  invitation:
+    type: "object"
+    required:
+    - "id"
+    - "rsvped"
+    properties:
+      id:
+        type: "string"
+        pattern: "^([A-Z0-9]){7}$"
+        x-regex: "^([A-Z0-9]){7}$"
+        x-modifiers: []
+      guest:
+        type: "array"
+        items:
+          type: "string"
+      rsvped:
+        type: "boolean"
+      date:
+        type: "string"
+        format: "date-time"
+      table:
+        type: "boolean"
+      email:
+        type: "string"
+        format: "email"
+      phone:
+        type: "string"
+      comment:
+        type: "string"
+    example:
+      date: "2000-01-23T04:56:07.000+00:00"
+      phone: "phone"
+      guest:
+      - "guest"
+      - "guest"
+      comment: "comment"
+      id: "id"
+      rsvped: true
+      table: true
+      email: "email"
+  Error:
+    properties:
+      code:
+        type: "string"
+      message:
+        type: "string"
+responses:
+  Standard500ErrorResponse:
+    description: "An unexpected error occured."
+    schema:
+      $ref: "#/definitions/Error"
+  UnauthorizedError:
+    description: "Access token is missing or invalid"
