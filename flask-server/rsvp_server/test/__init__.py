@@ -3,7 +3,7 @@ import logging
 import connexion
 from flask_testing import TestCase
 
-from rsvp-server.encoder import JSONEncoder
+from rsvp_server.encoder import JSONEncoder
 
 
 class BaseTestCase(TestCase):

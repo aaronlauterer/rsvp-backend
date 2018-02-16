@@ -5,9 +5,9 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from rsvp-server.models.error import Error  # noqa: E501
-from rsvp-server.models.invitation import Invitation  # noqa: E501
-from rsvp-server.test import BaseTestCase
+from rsvp_server.models.error import Error  # noqa: E501
+from rsvp_server.models.invitation import Invitation  # noqa: E501
+from rsvp_server.test import BaseTestCase
 
 
 class TestDefaultController(BaseTestCase):

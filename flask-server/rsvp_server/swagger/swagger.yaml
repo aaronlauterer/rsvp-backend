@@ -10,7 +10,7 @@ info:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "virtserver.swaggerhub.com"
-basePath: "/aaron-lauterer/rsvp/1.0.0"
+basePath: "/rsvp/api/v1"
 schemes:
 - "https"
 paths:
@@ -31,11 +31,13 @@ paths:
             $ref: "#/definitions/invitation"
         400:
           description: "bad input parameter"
+        404:
+          description: "invitation not found"
         500:
           description: "An unexpected error occured."
           schema:
             $ref: "#/definitions/Error"
-      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
+      x-swagger-router-controller: "rsvp_server.controllers.default_controller"
     post:
       summary: "adds an invitation"
       description: "Adds an invitation"
@@ -51,6 +53,8 @@ paths:
           description: "invitation created"
         400:
           description: "invalid input, object invalid"
+        401:
+          description: "Access token is missing or invalid"
         409:
           description: "an existing invitation already exists"
         500:
@@ -59,7 +63,57 @@ paths:
             $ref: "#/definitions/Error"
       security:
       - bearerAuth: []
-      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
+      x-swagger-router-controller: "rsvp_server.controllers.default_controller"
+    put:
+      summary: "update invitation"
+      description: "Updates an invitiation."
+      operationId: "update_invite"
+      parameters:
+      - in: "body"
+        name: "updateinvitation"
+        required: false
+        schema:
+          $ref: "#/definitions/invitation"
+      responses:
+        200:
+          description: "Invitation updated"
+        400:
+          description: "invalid input, object invalid"
+        404:
+          description: "invitation not found"
+        500:
+          description: "An unexpected error occured."
+          schema:
+            $ref: "#/definitions/Error"
+      x-swagger-router-controller: "rsvp_server.controllers.default_controller"
+    delete:
+      summary: "deletes an invitation"
+      description: "Deletes an invitation"
+      operationId: "del_invite"
+      parameters:
+      - name: "delid"
+        in: "query"
+        required: true
+        type: "string"
+        pattern: "^([A-Z0-9]){7}$"
+        x-regex: "^([A-Z0-9]){7}$"
+        x-modifiers: []
+      responses:
+        201:
+          description: "invitation deleted"
+        400:
+          description: "invalid input"
+        401:
+          description: "Access token is missing or invalid"
+        404:
+          description: "invitation not found"
+        500:
+          description: "An unexpected error occured."
+          schema:
+            $ref: "#/definitions/Error"
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: "rsvp_server.controllers.default_controller"
   /allinvites:
     get:
       summary: "get all invitations"
@@ -81,28 +135,29 @@ paths:
             $ref: "#/definitions/Error"
       security:
       - bearerAuth: []
-      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
-  /updateinvite:
+      x-swagger-router-controller: "rsvp_server.controllers.default_controller"
+  /login:
     post:
-      summary: "update invitation"
-      description: "Updates an invitiation."
-      operationId: "update_invite"
+      summary: "login admin user"
+      operationId: "login"
       parameters:
       - in: "body"
-        name: "updateinvitation"
+        name: "login"
         required: false
         schema:
-          $ref: "#/definitions/invitation"
+          $ref: "#/definitions/login"
       responses:
         200:
-          description: "Invitation updated"
+          description: "successful login"
+          schema:
+            type: "string"
         400:
-          description: "invalid input, object invalid"
+          description: "login failed"
         500:
           description: "An unexpected error occured."
           schema:
             $ref: "#/definitions/Error"
-      x-swagger-router-controller: "rsvp-server.controllers.default_controller"
+      x-swagger-router-controller: "rsvp_server.controllers.default_controller"
 securityDefinitions:
   bearerAuth:
     type: "apiKey"
@@ -117,6 +172,7 @@ definitions:
     properties:
       id:
         type: "string"
+        example: "ME4T6ZW"
         pattern: "^([A-Z0-9]){7}$"
         x-regex: "^([A-Z0-9]){7}$"
         x-modifiers: []
@@ -124,6 +180,7 @@ definitions:
         type: "array"
         items:
           type: "string"
+          example: "Max Muster"
       rsvped:
         type: "boolean"
       date:
@@ -136,16 +193,18 @@ definitions:
         format: "email"
       phone:
         type: "string"
+        example: "+43 660 1234567"
       comment:
         type: "string"
+        example: "This is a comment"
     example:
       date: "2000-01-23T04:56:07.000+00:00"
-      phone: "phone"
+      phone: "+43 660 1234567"
       guest:
-      - "guest"
-      - "guest"
-      comment: "comment"
-      id: "id"
+      - "Max Muster"
+      - "Max Muster"
+      comment: "This is a comment"
+      id: "ME4T6ZW"
       rsvped: true
       table: true
       email: "email"
@@ -155,6 +214,17 @@ definitions:
         type: "string"
       message:
         type: "string"
+  login:
+    type: "object"
+    required:
+    - "pass"
+    - "user"
+    properties:
+      user:
+        type: "string"
+      pass:
+        type: "string"
+        format: "password"
 responses:
   Standard500ErrorResponse:
     description: "An unexpected error occured."

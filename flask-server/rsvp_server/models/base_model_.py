@@ -3,7 +3,7 @@ import pprint
 import six
 import typing
 
-from rsvp-server import util
+from rsvp_server import util
 
 T = typing.TypeVar('T')
 
