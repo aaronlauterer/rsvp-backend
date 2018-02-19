@@ -27,6 +27,7 @@ class invitation(Base):
         nullable=False
     )
     email = Column(String, nullable=True)
+    comment = Column(String, nullable=True)
     phone = Column(String, nullable=True)
     rsvped = Column(Boolean)
     table = Column(Boolean)
@@ -39,8 +40,9 @@ class invitation(Base):
             'id': self.id,
             'guest': self.guest,
             'email': self.email,
+            'comment': self.comment,
             'phone': self.phone,
-            'rspved': self.rsvped,
+            'rsvped': self.rsvped,
             'table': self.table,
             'date': dump_datetime(self.date)
         }

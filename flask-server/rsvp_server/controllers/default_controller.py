@@ -42,7 +42,7 @@ def check_token():
         if decoded_token['exp'] < datetime.utcnow().strftime('%s'):
             return False
 
-        return Truen
+        return True
     else:
         return False
 
@@ -146,8 +146,8 @@ def update_invite(updateinvitation=None):  # noqa: E501
         for key, val in data.items():
             if key not in protected_keys:
                 update[key] = val
-            update['date'] = datetime.utcnow()
-
+            if (not check_token()):
+                update['date'] = datetime.utcnow()
 
         try:
             s.query(db.invitation).filter(db.invitation.id == data['id']).update(update)
