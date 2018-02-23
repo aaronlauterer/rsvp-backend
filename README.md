@@ -12,6 +12,12 @@ Handles RSVPs to invitations. Does work for one event at a time as I built this 
 
 The `RSVP_DB_PATH` environment variable determines the path to the sqlite file. Defaults to `/tmp/rsvp.db`.
 
+### Listen IP and HOST
+
+The `RSVP_HOST` environment variable sets the IP on which the API server listens on.
+
+The `RSVP_PORT` environment variable sets the PORT on which the API server listens on.
+
 ### Token secret
 
 In order to create a [JWT](https://jwt.io) a secret needs to be set.
