@@ -38,6 +38,8 @@ def check_token():
             decoded_token = jwt.decode(token.encode(), RSVP_TOKEN_SECRET, algorithms='HS256')
         except jwt.exceptions.DecodeError as error:
             return False
+        except jwt.exceptions.ExpiredSignatureError:
+            return False
 
         if decoded_token['exp'] < datetime.utcnow().strftime('%s'):
             return False
