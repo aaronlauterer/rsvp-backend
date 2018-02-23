@@ -2,6 +2,7 @@ import os
 from sqlalchemy import Column, DateTime, String, Boolean, ARRAY
 import sqlalchemy_jsonfield
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import timezone
 
 # get db path
 if 'RSVP_DB_PATH' in os.environ:
@@ -15,7 +16,8 @@ def dump_datetime(value):
     """Deserialize datetime object into string form for JSON processing."""
     if value is None:
         return None
-    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+    tzvalue = value.replace(tzinfo=timezone.utc)
+    return tzvalue.isoformat()
 
 class invitation(Base):
     __tablename__ = 'rsvp'
