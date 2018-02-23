@@ -137,8 +137,13 @@ def update_invite(updateinvitation=None):  # noqa: E501
 
     :rtype: None
     """
+    admin = check_token()
+
     if connexion.request.is_json:
-        protected_keys = ['id', 'table', 'date']
+        if admin:
+            protected_keys = ['id', 'date']
+        else:
+            protected_keys = ['id', 'table', 'date']
         data = connexion.request.get_json()
 
         if s.query(db.invitation).filter(db.invitation.id == data['id']).count() == 0:
@@ -148,7 +153,7 @@ def update_invite(updateinvitation=None):  # noqa: E501
         for key, val in data.items():
             if key not in protected_keys:
                 update[key] = val
-            if (not check_token()):
+            if (not admin):
                 update['date'] = datetime.utcnow()
 
         try:
